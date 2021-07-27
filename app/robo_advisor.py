@@ -1,5 +1,21 @@
 # this is the "app/robo_advisor.py" file
 
+from pprint import pprint
+import requests
+import json
+from getpass import getpass
+#
+# INFO INPUTS
+#
+
+stock_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
+response = requests.get(stock_url)
+parsed_response = json.loads(response.text)
+pprint(parsed_response)
+#
+# INFO INPUTS
+#
+
 print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
 print("-------------------------")
