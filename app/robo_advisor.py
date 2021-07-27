@@ -17,9 +17,16 @@ parsed_response = json.loads(response.text)
 pprint(parsed_response)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-lastest_close = parsed_response["Time Series (Daily)"]["2021-07-26"]["4. close"]
-recent_high = parsed_response["Time Series (Daily)"]["2021-07-26"]["2. high"]
-recent_low = parsed_response["Time Series (Daily)"]["2021-07-26"]["3. low"] 
+
+tsd = parsed_response["Time Series (Daily)"]
+
+dates = list(tsd.keys()) #TODO: assumes first day is on top, sort to ensure latest is first
+
+latest_day = dates[0]
+
+lastest_close = tsd[latest_day]["4. close"]
+recent_high = tsd[latest_day]["2. high"]
+recent_low = tsd[latest_day]["3. low"] 
 #
 # INFO INPUTS
 #
