@@ -25,8 +25,23 @@ dates = list(tsd.keys()) #TODO: assumes first day is on top, sort to ensure late
 latest_day = dates[0]
 
 lastest_close = tsd[latest_day]["4. close"]
-recent_high = tsd[latest_day]["2. high"]
-recent_low = tsd[latest_day]["3. low"] 
+
+high_prices = []
+
+for date in dates:
+    high_price = tsd[date]["2. high"]
+    high_prices.append(float(high_price))
+
+recent_high = max(high_prices)
+
+low_prices = []
+
+for date in dates:
+    low_price = tsd[date]["3. low"]
+    low_prices.append(float(low_price))
+
+recent_low = min(low_prices)
+
 #
 # INFO INPUTS
 #
