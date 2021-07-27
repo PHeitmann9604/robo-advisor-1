@@ -3,22 +3,27 @@ import csv
 import json
 import os
 
+from dotenv import load_dotenv
 import requests
 
 from pprint import pprint
 from datetime import datetime
 from getpass import getpass
 
+load_dotenv
+
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 #
 # INFO INPUTS
 #
+api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
+symbol = "MSFT" #TODO: accept user input
 
-stock_url = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol=MSFT&apikey=demo"
+
+stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={api_key}"
 response = requests.get(stock_url)
 parsed_response = json.loads(response.text)
-pprint(parsed_response)
 
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
@@ -64,7 +69,7 @@ with open(csv_file_path, "w") as csv_file:
         })
 
 print("-------------------------")
-print("SELECTED SYMBOL: XYZ")
+print(f"SELECTED SYMBOL: {symbol}")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
 # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
