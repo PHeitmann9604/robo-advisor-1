@@ -1,6 +1,7 @@
 # this is the "app/robo_advisor.py" file
 
 from pprint import pprint
+from datetime import datetime
 import requests
 import json
 from getpass import getpass
@@ -27,19 +28,15 @@ latest_day = dates[0]
 lastest_close = tsd[latest_day]["4. close"]
 
 high_prices = []
-
-for date in dates:
-    high_price = tsd[date]["2. high"]
-    high_prices.append(float(high_price))
-
-recent_high = max(high_prices)
-
 low_prices = []
 
 for date in dates:
+    high_price = tsd[date]["2. high"]
+    high_prices.append(float(high_price))    
     low_price = tsd[date]["3. low"]
     low_prices.append(float(low_price))
 
+recent_high = max(high_prices)
 recent_low = min(low_prices)
 
 #
@@ -50,7 +47,9 @@ print("-------------------------")
 print("SELECTED SYMBOL: XYZ")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT: 2018-02-20 02:00pm")
+# code for datetikme = https://www.geeksforgeeks.org/get-current-date-using-python/
+
+print(f"REQUEST AT: {datetime.now()}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
 print(f"LATEST CLOSE: {to_usd(float(lastest_close))}")
