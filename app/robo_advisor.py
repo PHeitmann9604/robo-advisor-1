@@ -8,17 +8,21 @@ import requests
 
 from pprint import pprint
 from datetime import datetime
-from getpass import getpass
 
 load_dotenv
 
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
-#
+
+# ask for user input 
+symbol = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):"))  #TODO: accept user input
+
+# Validate a user input
+
 # INFO INPUTS
 #
 api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
-symbol = "MSFT" #TODO: accept user input
+
 
 
 stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={api_key}"
