@@ -29,23 +29,27 @@ stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUS
 response = requests.get(stock_url)
 parsed_response = json.loads(response.text)
 
-records = []
-for date, daily_data in parsed_response["Time Series (Daily)"].items():
-    record = {
-        "date": date,
-        "open": float(daily_data["1. open"]),
-        "high": float(daily_data["2. high"]),
-        "low": float(daily_data["3. low"]),
-        "close": float(daily_data["4. close"]),
-        "volume": int(daily_data["5. volume"]),
-    }
-    records.append(record)
+last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
+tsd = parsed_response["Time Series (Daily)"]
+
+records = []
+for date, daily_data in tsd.items():
+     record = {
+         "date": date,
+         "open": to_usd(float(daily_data["1. open"])),
+         "high": to_usd(float(daily_data["2. high"])),
+         "low": to_usd(float(daily_data["3. low"])),
+         "close": to_usd(float(daily_data["4. close"])),
+         "volume": int(daily_data["6. volume"]),
+     }
+     records.append(record)
+ 
 df = DataFrame(records)
-# last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-# 
-# tsd = parsed_response["Time Series (Daily)"]
-# 
+ 
+ 
+
+
 # dates = list(tsd.keys()) #TODO: assumes first day is on top, sort to ensure latest is first
 # 
 # latest_day = dates[0]
@@ -67,24 +71,29 @@ df = DataFrame(records)
 #
 # INFO INPUTS
 #
+# EXPORT TO CSV
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+df.to_csv(csv_file_path)
 
-csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
-with open(csv_file_path, "w") as csv_file:
-    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
-    writer.writeheader()
-    for date in dates:
-        daily_prices = tsd[date]
-        writer.writerow({
-            "timestamp": date,
-            "open": daily_prices["1. open"],
-            "high": daily_prices["2. high"],
-            "low": daily_prices["3. low"],
-            "close": daily_prices["4. close"],
-            "volume": daily_prices["6. volume"]
-        })
 
+# csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+# 
+# csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
+# with open(csv_file_path, "w") as csv_file:
+#     writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
+#     writer.writeheader()
+#     for date in dates:
+#         daily_prices = tsd[date]
+#         writer.writerow({
+#             "timestamp": date,
+#             "open": daily_prices["1. open"],
+#             "high": daily_prices["2. high"],
+#             "low": daily_prices["3. low"],
+#             "close": daily_prices["4. close"],
+#             "volume": daily_prices["6. volume"]
+#         })
+# 
 print("-------------------------")
 print(f"SELECTED SYMBOL: {symbol}")
 print("-------------------------")
@@ -94,9 +103,9 @@ print("REQUESTING STOCK MARKET DATA...")
 print(f"REQUEST AT: {datetime.now()}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
-print(f"LATEST CLOSE: {to_usd(float(lastest_close))}")
-print(f"RECENT HIGH: {to_usd(float(recent_high))}")
-print(f"RECENT LOW: {to_usd(float(recent_low))}")
+print("LATEST CLOSE: ", records[0]["close"])
+print("RECENT HIGH: ", df["high"].max())
+print("RECENT LOW: ", df["low"].min())
 print("-------------------------")
 print("RECOMMENDATION: BUY!")
 print("RECOMMENDATION REASON: TODO")
@@ -106,3 +115,8 @@ print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
 
+# CHART PRICES OVER TIME
+
+fig = px.line(df, y="close", x="date", title=f"Closing Prices for {symbol.upper()}") # see: https://plotly.com/python-api-reference/generated/plotly.express.line
+fig.update_yaxes(autorange="reversed")
+fig.show()
