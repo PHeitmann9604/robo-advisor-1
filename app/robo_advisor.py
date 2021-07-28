@@ -107,18 +107,18 @@ else:
     api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
     # try except source: https://www.w3schools.com/python/python_try_except.asp
     try:
-        cyrpto_url = f"https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol={symbol}&market=USD&apikey={api_key}"
+        crypto_url = f"https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=BTC&market=USD&apikey={api_key}"
         response = requests.get(crypto_url)
         parsed_response = json.loads(response.text)
 
         last_refreshed = parsed_response["Meta Data"]["6. Last Refreshed"]
 
-        tsdcd = parsed_response["Time Series (Digital Currency Daily)"]
+        tsd = parsed_response["Time Series (Digital Currency Daily)"]
     except:
         print("INVALID crypto currency. Please run the program again with a valid crypto currency")
         exit()
     records = []
-    for date, daily_data in tsdcd.items():
+    for date, daily_data in tsd.items():
          record = {
              "date": date,
              "open": daily_data["1a. open (USD)"],
