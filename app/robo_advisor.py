@@ -2,10 +2,10 @@
 import csv
 import json
 import os
-
 from dotenv import load_dotenv
 import requests
-
+from pandas import DataFrame
+import plotly.express as px
 from pprint import pprint
 from datetime import datetime
 
@@ -29,27 +29,40 @@ stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUS
 response = requests.get(stock_url)
 parsed_response = json.loads(response.text)
 
-last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
+records = []
+for date, daily_data in parsed_response["Time Series (Daily)"].items():
+    record = {
+        "date": date,
+        "open": float(daily_data["1. open"]),
+        "high": float(daily_data["2. high"]),
+        "low": float(daily_data["3. low"]),
+        "close": float(daily_data["4. close"]),
+        "volume": int(daily_data["5. volume"]),
+    }
+    records.append(record)
 
-tsd = parsed_response["Time Series (Daily)"]
-
-dates = list(tsd.keys()) #TODO: assumes first day is on top, sort to ensure latest is first
-
-latest_day = dates[0]
-
-lastest_close = tsd[latest_day]["4. close"]
-
-high_prices = []
-low_prices = []
-
-for date in dates:
-    high_price = tsd[date]["2. high"]
-    high_prices.append(float(high_price))    
-    low_price = tsd[date]["3. low"]
-    low_prices.append(float(low_price))
-
-recent_high = max(high_prices)
-recent_low = min(low_prices)
+df = DataFrame(records)
+# last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
+# 
+# tsd = parsed_response["Time Series (Daily)"]
+# 
+# dates = list(tsd.keys()) #TODO: assumes first day is on top, sort to ensure latest is first
+# 
+# latest_day = dates[0]
+# 
+# lastest_close = tsd[latest_day]["4. close"]
+# 
+# high_prices = []
+# low_prices = []
+# 
+# for date in dates:
+#     high_price = tsd[date]["2. high"]
+#     high_prices.append(float(high_price))    
+#     low_price = tsd[date]["3. low"]
+#     low_prices.append(float(low_price))
+# 
+# recent_high = max(high_prices)
+# recent_low = min(low_prices)
 
 #
 # INFO INPUTS
