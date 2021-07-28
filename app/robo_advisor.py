@@ -19,25 +19,25 @@ symbol = str.strip(input("Please choose a stock ticker to search (e.g. MSFT):"))
 # symbol1, symbol2 = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):")).split()
 
 # Validate a user input
-if symbol.isnumeric() or len(symbol) > 5:
-    print("INVALID INPUT")
-    exit()    
-else:
-    print("-------------------------")
-    print(f"SELECTED SYMBOL: {symbol}")
-    print("-------------------------")
-    print("REQUESTING STOCK MARKET DATA...")
+
+
+print("-------------------------")
+print(f"SELECTED SYMBOL: {symbol}")
+print("-------------------------")
+print("REQUESTING STOCK MARKET DATA...")
 
 api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
+try:
+    stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={api_key}"
+    response = requests.get(stock_url)
+    parsed_response = json.loads(response.text)
 
-stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={api_key}"
-response = requests.get(stock_url)
-parsed_response = json.loads(response.text)
+    last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
-last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-
-tsd = parsed_response["Time Series (Daily)"]
-
+    tsd = parsed_response["Time Series (Daily)"]
+except:
+    print("INVALID ticker. Please run the program again with a valid ticker symbol")
+    exit()
 records = []
 for date, daily_data in tsd.items():
      record = {
@@ -52,53 +52,13 @@ for date, daily_data in tsd.items():
  
 df = DataFrame(records)
  
- 
-
-
-# dates = list(tsd.keys()) #TODO: assumes first day is on top, sort to ensure latest is first
-# 
-# latest_day = dates[0]
-# 
-# lastest_close = tsd[latest_day]["4. close"]
-# 
-# high_prices = []
-# low_prices = []
-# 
-# for date in dates:
-#     high_price = tsd[date]["2. high"]
-#     high_prices.append(float(high_price))    
-#     low_price = tsd[date]["3. low"]
-#     low_prices.append(float(low_price))
-# 
-# recent_high = max(high_prices)
-# recent_low = min(low_prices)
-
-#
+ #
 # INFO INPUTS
 #
 # EXPORT TO CSV
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
 df.to_csv(csv_file_path)
-
-
-# csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
-# 
-# csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
-# with open(csv_file_path, "w") as csv_file:
-#     writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
-#     writer.writeheader()
-#     for date in dates:
-#         daily_prices = tsd[date]
-#         writer.writerow({
-#             "timestamp": date,
-#             "open": daily_prices["1. open"],
-#             "high": daily_prices["2. high"],
-#             "low": daily_prices["3. low"],
-#             "close": daily_prices["4. close"],
-#             "volume": daily_prices["6. volume"]
-#         })
-# 
 
 # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
 
