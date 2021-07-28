@@ -15,15 +15,17 @@ def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 
 # ask for user input 
-symbol = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):"))  #TODO: accept user input
-
+symbol = str.strip(input("Please choose a stock ticker to search (e.g. MSFT):"))
+# symbol1, symbol2 = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):")).split()
+if symbol.isnumeric() or len(symbol) > 5:
+    print("INVALID INPUT")
+        exit()
+else:
+    print(f"Looking up data for: {symbol}")
 # Validate a user input
 
-# INFO INPUTS
-#
+
 api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
-
-
 
 stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={api_key}"
 response = requests.get(stock_url)
