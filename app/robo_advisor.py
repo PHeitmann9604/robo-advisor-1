@@ -17,13 +17,16 @@ def to_usd(my_price):
 # ask for user input 
 symbol = str.strip(input("Please choose a stock ticker to search (e.g. MSFT):"))
 # symbol1, symbol2 = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):")).split()
+
+# Validate a user input
 if symbol.isnumeric() or len(symbol) > 5:
     print("INVALID INPUT")
-        exit()
+    exit()    
 else:
-    print(f"Looking up data for: {symbol}")
-# Validate a user input
-
+    print("-------------------------")
+    print(f"SELECTED SYMBOL: {symbol}")
+    print("-------------------------")
+    print("REQUESTING STOCK MARKET DATA...")
 
 api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
 
@@ -96,10 +99,7 @@ df.to_csv(csv_file_path)
 #             "volume": daily_prices["6. volume"]
 #         })
 # 
-print("-------------------------")
-print(f"SELECTED SYMBOL: {symbol}")
-print("-------------------------")
-print("REQUESTING STOCK MARKET DATA...")
+
 # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
 
 print(f"REQUEST AT: {datetime.now()}")
