@@ -8,6 +8,7 @@ from pandas import DataFrame
 import plotly.express as px
 from pprint import pprint
 from datetime import datetime
+import statistics
 
 load_dotenv
 
@@ -20,13 +21,13 @@ symbol = str.strip(input("Please choose a stock ticker to search (e.g. MSFT):"))
 
 # Validate a user input
 
-
 print("-------------------------")
 print(f"SELECTED SYMBOL: {symbol}")
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
 
 api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
+# try except source: https://www.w3schools.com/python/python_try_except.asp
 try:
     stock_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&symbol={symbol}&apikey={api_key}"
     response = requests.get(stock_url)
@@ -42,17 +43,17 @@ records = []
 for date, daily_data in tsd.items():
      record = {
          "date": date,
-         "open": to_usd(float(daily_data["1. open"])),
-         "high": to_usd(float(daily_data["2. high"])),
-         "low": to_usd(float(daily_data["3. low"])),
-         "close": to_usd(float(daily_data["4. close"])),
+         "open": daily_data["1. open"],
+         "high": daily_data["2. high"],
+         "low": daily_data["3. low"],
+         "close": daily_data["4. close"],
          "volume": int(daily_data["6. volume"]),
      }
      records.append(record)
  
 df = DataFrame(records)
  
- #
+#
 # INFO INPUTS
 #
 # EXPORT TO CSV
@@ -65,12 +66,16 @@ df.to_csv(csv_file_path)
 print(f"REQUEST AT: {datetime.now()}")
 print("-------------------------")
 print(f"LATEST DAY: {last_refreshed}")
-print("LATEST CLOSE: ", records[0]["close"])
-print("RECENT HIGH: ", df["high"].max())
-print("RECENT LOW: ", df["low"].min())
+print("LATEST CLOSE: ", to_usd(float(records[0]["close"])))
+print("RECENT HIGH: ", to_usd(float(df["high"].max())))
+print("RECENT LOW: ", to_usd(float(df["low"].min())))
 print("-------------------------")
-print("RECOMMENDATION: BUY!")
-print("RECOMMENDATION REASON: TODO")
+ten_day_average = (float(records[1]["close"]) + float(records[2]["close"]) + float(records[3]["close"]) + float(records[4]["close"]) + float(records[5]["close"]) + float(records[6]["close"]) + float(records[7]["close"]) + float(records[8]["close"]) + float(records[9]["close"]) + float(records[10]["close"]))/10
+if float(records[0]["close"]) > float(ten_day_average): 
+    print("RECOMMENDATION: BUY")
+else: 
+     print("RECOMMENDATION: SELL")
+print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the ten day average price of", to_usd(float(ten_day_average)))
 print("-------------------------")
 print(f"WRITING DATA TO CSV: {csv_file_path}...")
 print("-------------------------")
