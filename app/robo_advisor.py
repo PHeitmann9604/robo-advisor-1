@@ -7,13 +7,14 @@ import requests
 from pandas import DataFrame
 import plotly.express as px
 from pprint import pprint
-from datetime import datetime
+import datetime
 import statistics
 
 load_dotenv
 
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
+
 data_choice = str.strip(input("Please choose between stocks or crypto:"))
 if data_choice == "stocks" or data_choice == "crypto":
     print(f"REQUESTING {data_choice} DATA...")
@@ -68,8 +69,8 @@ if data_choice == "stocks":
     df.to_csv(csv_file_path)
 
     # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
-    now = datetime.now().strftime("%H:%M%p on %B %d, %Y")
-       
+    now = datetime.datetime.now().strftime("%H:%M%p on %B %d, %Y")
+    print(type(date))
     print(f"REQUEST AT: {now}")
     print("-------------------------")
     print(f"LATEST DAY: {last_refreshed}")
@@ -141,8 +142,7 @@ else:
 
     # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
 
-    now = datetime.now().strftime("%H:%M%p on %B %d, %Y")
-    #last_refreshed_formant = last_refreshed.datetime.strftime("%B %d, %Y")
+    now = datetime.datetime.now().strftime("%H:%M%p on %B %d, %Y")
     print(f"REQUEST AT: {now}")
     print("-------------------------")
     print(f"LATEST DAY: {last_refreshed}")
