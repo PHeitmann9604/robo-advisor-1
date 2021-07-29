@@ -40,7 +40,7 @@ if data_choice == "stocks":
         parsed_response = json.loads(response.text)
 
         last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-
+        
         tsd = parsed_response["Time Series (Daily)"]
     except:
         print("INVALID ticker. Please run the program again with a valid ticker symbol")
@@ -49,10 +49,10 @@ if data_choice == "stocks":
     for date, daily_data in tsd.items():
          record = {
              "date": date,
-             "open": daily_data["1. open"],
-             "high": daily_data["2. high"],
-             "low": daily_data["3. low"],
-             "close": daily_data["5. adjusted close"],
+             "open": float(daily_data["1. open"]),
+             "high": float(daily_data["2. high"]),
+             "low": float(daily_data["3. low"]),
+             "close": float(daily_data["5. adjusted close"]),
              "volume": int(daily_data["6. volume"]),
          }
          records.append(record)
@@ -68,20 +68,21 @@ if data_choice == "stocks":
     df.to_csv(csv_file_path)
 
     # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
-
-    print(f"REQUEST AT: {datetime.now()}")
+    now = datetime.now().strftime("%H:%M%p on %B %d, %Y")
+       
+    print(f"REQUEST AT: {now}")
     print("-------------------------")
     print(f"LATEST DAY: {last_refreshed}")
-    print("LATEST CLOSE: ", to_usd(float(records[0]["close"])))
-    print("RECENT HIGH: ", to_usd(float(df["high"].max())))
-    print("RECENT LOW: ", to_usd(float(df["low"].min())))
+    print("LATEST CLOSE: ", to_usd(records[0]["close"]))
+    print("RECENT HIGH: ", to_usd(df["high"].max()))
+    print("RECENT LOW: ", to_usd(df["low"].min()))
     print("-------------------------")
-    ten_day_average = (float(records[1]["close"]) + float(records[2]["close"]) + float(records[3]["close"]) + float(records[4]["close"]) + float(records[5]["close"]) + float(records[6]["close"]) + float(records[7]["close"]) + float(records[8]["close"]) + float(records[9]["close"]) + float(records[10]["close"]))/10
-    if float(records[0]["close"]) > float(ten_day_average): 
+    buy_test = df["low"].min() * 1.10
+    if float(records[0]["close"]) < float(buy_test): 
         print("RECOMMENDATION: BUY")
     else: 
          print("RECOMMENDATION: SELL")
-    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the ten day average price of", to_usd(float(ten_day_average)))
+    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the 10 percent above the recent low", to_usd(float(buy_test)))
     print("-------------------------")
     print(f"WRITING DATA TO CSV: {csv_file_path}...")
     print("-------------------------")
@@ -120,10 +121,10 @@ else:
     for date, daily_data in tsd.items():
          record = {
              "date": date,
-             "open": daily_data["1b. open (USD)"],
-             "high": daily_data["2b. high (USD)"],
-             "low": daily_data["3b. low (USD)"],
-             "close": daily_data["4b. close (USD)"],
+             "open": float(daily_data["1b. open (USD)"]),
+             "high": float(daily_data["2b. high (USD)"]),
+             "low": float(daily_data["3b. low (USD)"]),
+             "close": float(daily_data["4b. close (USD)"]),
              "volume": daily_data["5. volume"],
          }
          records.append(record)
@@ -140,19 +141,21 @@ else:
 
     # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
 
-    print(f"REQUEST AT: {datetime.now()}")
+    now = datetime.now().strftime("%H:%M%p on %B %d, %Y")
+    #last_refreshed_formant = last_refreshed.datetime.strftime("%B %d, %Y")
+    print(f"REQUEST AT: {now}")
     print("-------------------------")
     print(f"LATEST DAY: {last_refreshed}")
-    print("LATEST CLOSE: ", to_usd(float(records[0]["close"])))
-    print("RECENT HIGH: ", to_usd(float(df["high"].max())))
-    print("RECENT LOW: ", to_usd(float(df["low"].min())))
+    print("LATEST CLOSE: ", to_usd(records[0]["close"]))
+    print("RECENT HIGH: ", to_usd(df["high"].max()))
+    print("RECENT LOW: ", to_usd(df["low"].min()))
     print("-------------------------")
-    ten_day_average = (float(records[1]["close"]) + float(records[2]["close"]) + float(records[3]["close"]) + float(records[4]["close"]) + float(records[5]["close"]) + float(records[6]["close"]) + float(records[7]["close"]) + float(records[8]["close"]) + float(records[9]["close"]) + float(records[10]["close"]))/10
-    if float(records[0]["close"]) > float(ten_day_average): 
+    buy_test = df["low"].min() * 1.10
+    if float(records[0]["close"]) < float(buy_test):  
         print("RECOMMENDATION: BUY")
     else: 
          print("RECOMMENDATION: SELL")
-    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the ten day average price of", to_usd(float(ten_day_average)))
+    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the ten day average price of", to_usd(float(buy_test)))
     print("-------------------------")
     print(f"WRITING DATA TO CSV: {csv_file_path}...")
     print("-------------------------")
