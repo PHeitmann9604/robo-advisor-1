@@ -89,9 +89,8 @@ if data_choice == "stocks":
     print("-------------------------")
 
     # CHART PRICES OVER TIME
-
+    sorted_close = sorted("close")
     fig = px.line(df, y="close", x="date", title=f"Closing Prices for {symbol.upper()}") # see: https://plotly.com/python-api-reference/generated/plotly.express.line
-    fig.update_yaxes(autorange="reversed")
     fig.show()
 else:
     symbol = str.strip(input("Please choose a crypto currency to search (e.g.BTC):"))
@@ -107,7 +106,7 @@ else:
     api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
     # try except source: https://www.w3schools.com/python/python_try_except.asp
     try:
-        crypto_url = f"https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol=BTC&market=USD&apikey={api_key}"
+        crypto_url = f"https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol={symbol}&market=USD&apikey={api_key}"
         response = requests.get(crypto_url)
         parsed_response = json.loads(response.text)
 
@@ -121,11 +120,11 @@ else:
     for date, daily_data in tsd.items():
          record = {
              "date": date,
-             "open": daily_data["1a. open (USD)"],
-             "high": daily_data["2a. high (USD)"],
-             "low": daily_data["3a. low (USD)"],
-             "close": daily_data["4a. close (USD)"],
-             "volume": int(daily_data["5. volume"]),
+             "open": daily_data["1b. open (USD)"],
+             "high": daily_data["2b. high (USD)"],
+             "low": daily_data["3b. low (USD)"],
+             "close": daily_data["4b. close (USD)"],
+             "volume": daily_data["5. volume"],
          }
          records.append(record)
     
@@ -163,5 +162,4 @@ else:
     # CHART PRICES OVER TIME
 
     fig = px.line(df, y="close", x="date", title=f"Closing Prices for {symbol.upper()}") # see: https://plotly.com/python-api-reference/generated/plotly.express.line
-    fig.update_yaxes(autorange="reversed")
     fig.show()
