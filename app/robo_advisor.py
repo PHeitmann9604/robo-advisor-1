@@ -19,7 +19,7 @@ data_choice = str.strip(input("Please choose between stocks or crypto:"))
 if data_choice == "stocks" or data_choice == "crypto":
     print(f"REQUESTING {data_choice} DATA...")
 else:
-    print("INVALID CHOICE. Please selected either stocks or crypto data")
+    print("INVALID CHOICE. Please selected either stocks or crypto")
     data_choice = str.strip(input("Please choose between stocks or crypto:"))
 # ask for user input 
 if data_choice == "stocks":
@@ -28,7 +28,7 @@ if data_choice == "stocks":
 
     # Validate a user input
     if symbol.isnumeric() or len(symbol) > 5:
-        print("INVALID INPUT")
+        print("INVALID INPUT. Expecting a properly-formed stock symbol like 'MSFT'. Please try again.")
         exit()
     else:
         print("-------------------------")
@@ -47,7 +47,7 @@ if data_choice == "stocks":
         
         tsd = parsed_response["Time Series (Daily)"]
     except:
-        print("INVALID ticker. Please run the program again with a valid ticker symbol")
+        print("Sorry, could not find any trading data for that stock symbol")
         exit()
     records = []
     for date, daily_data in tsd.items():
@@ -68,25 +68,26 @@ if data_choice == "stocks":
     #
     # EXPORT TO CSV
 
-    csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", f"{symbol}_prices.csv")
+    csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
     df.to_csv(csv_file_path)
 
     # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
     now = datetime.datetime.now().strftime("%H:%M%p on %B %d, %Y")
-    print(type(date))
+    l = datetime.datetime.fromisoformat(last_refreshed)
+    l_format = datetime.datetime.strftime(l, "%B %d, %Y")
     print(f"REQUEST AT: {now}")
     print("-------------------------")
-    print(f"LATEST DAY: {last_refreshed}")
+    print(f"LATEST DAY: {l_format}")
     print("LATEST CLOSE: ", to_usd(records[0]["close"]))
     print("RECENT HIGH: ", to_usd(df["high"].max()))
     print("RECENT LOW: ", to_usd(df["low"].min()))
     print("-------------------------")
     buy_test = df["low"].min() * 1.10
     if float(records[0]["close"]) < float(buy_test): 
-        print("RECOMMENDATION: BUY")
+        print("RECOMMENDATION: SELL")
     else: 
-         print("RECOMMENDATION: SELL")
-    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the 10 percent above the recent low", to_usd(float(buy_test)))
+         print("RECOMMENDATION: BUY")
+    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to 10 percent above the recent low which is", to_usd(float(buy_test)))
     print("-------------------------")
     print(f"WRITING DATA TO CSV: {csv_file_path}...")
     print("-------------------------")
@@ -103,7 +104,7 @@ else:
 
     # Validate a user input
     if symbol.isnumeric() or len(symbol) > 5:
-        print("INVALID INPUT")
+        print("INVALID INPUT. Expecting a properly-formed stock symbol like 'MSFT'. Please try again.")
         exit()
     else:
         print("-------------------------")
@@ -122,7 +123,7 @@ else:
 
         tsd = parsed_response["Time Series (Digital Currency Daily)"]
     except:
-        print("INVALID crypto currency. Please run the program again with a valid crypto currency")
+        print("Sorry, could not find any trading data for that crypto currency")
         exit()
     records = []
     for date, daily_data in tsd.items():
@@ -143,25 +144,27 @@ else:
     #
     # EXPORT TO CSV
 
-    csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", f"{symbol}_prices.csv")
+    csv_file_path = os.path.join(os.path.dirname(__file__), "..", "data", "crypto_prices.csv")
     df.to_csv(csv_file_path)
 
     # code for datetime = https://www.geeksforgeeks.org/get-current-date-using-python/
 
     now = datetime.datetime.now().strftime("%H:%M%p on %B %d, %Y")
+    l = datetime.datetime.fromisoformat(last_refreshed)
+    l_format = datetime.datetime.strftime(l, "%B %d, %Y")
     print(f"REQUEST AT: {now}")
     print("-------------------------")
-    print(f"LATEST DAY: {last_refreshed}")
+    print(f"LATEST DAY: {l_format}")
     print("LATEST CLOSE: ", to_usd(records[0]["close"]))
     print("RECENT HIGH: ", to_usd(df["high"].max()))
     print("RECENT LOW: ", to_usd(df["low"].min()))
     print("-------------------------")
     buy_test = df["low"].min() * 1.10
     if float(records[0]["close"]) < float(buy_test):  
-        print("RECOMMENDATION: BUY")
+        print("RECOMMENDATION: SELL")
     else: 
-         print("RECOMMENDATION: SELL")
-    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to the ten day average price of", to_usd(float(buy_test)))
+         print("RECOMMENDATION: BUY")
+    print("RECOMMENDATION REASON:The most recent closing price of", to_usd(float(records[0]["close"])), "is compared to 10 percent above the recent low which is", to_usd(float(buy_test)))
     print("-------------------------")
     print(f"WRITING DATA TO CSV: {csv_file_path}...")
     print("-------------------------")
