@@ -27,11 +27,14 @@ if data_choice == "stocks":
     # symbol1, symbol2 = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):")).split()
 
     # Validate a user input
-
-    print("-------------------------")
-    print(f"SELECTED SYMBOL: {symbol}")
-    print("-------------------------")
-    print("REQUESTING STOCK MARKET DATA...")
+    if symbol.isnumeric() or len(symbol) > 5:
+        print("INVALID INPUT")
+        exit()
+    else:
+        print("-------------------------")
+        print(f"SELECTED SYMBOL: {symbol}")
+        print("-------------------------")
+        print("REQUESTING STOCK MARKET DATA...")
 
     api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
     # try except source: https://www.w3schools.com/python/python_try_except.asp
@@ -99,11 +102,14 @@ else:
     # symbol1, symbol2 = str.strip(input("Please choose a stock ticker to search (i.e. MSFT):")).split()
 
     # Validate a user input
-
-    print("-------------------------")
-    print(f"SELECTED SYMBOL: {symbol}")
-    print("-------------------------")
-    print("REQUESTING STOCK MARKET DATA...")
+    if symbol.isnumeric() or len(symbol) > 5:
+        print("INVALID INPUT")
+        exit()
+    else:
+        print("-------------------------")
+        print(f"SELECTED SYMBOL: {symbol}")
+        print("-------------------------")
+        print("REQUESTING STOCK MARKET DATA...")
 
     api_key = os.environ.get("ALPHAVANTAGE_API_KEY") 
     # try except source: https://www.w3schools.com/python/python_try_except.asp
