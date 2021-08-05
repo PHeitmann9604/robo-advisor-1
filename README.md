@@ -40,7 +40,7 @@ After creating the .env folder, enter your api key under the name ALPHAVANTAGE_A
 After activating the variable environment, installing all necessary packages, and entering your API key, the robo advisor is ready to run - initiate the advisor through the following command:
 
 ```sh
-python app/robo_-_advisor.py
+python app/robo_advisor.py
 ```
 
 Follow the instructions and happy investing!
